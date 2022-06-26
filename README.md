@@ -29,7 +29,8 @@ Users should be able to:
 ### Screenshots
 
 ![](./screenshots/Desktop.png)
-![](./screenshots/Mobile.png)
+<img src="./screenshots/Mobile.png" width="720px" height="1280px">
+
 
 
 ## My process
