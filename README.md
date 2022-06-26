@@ -52,7 +52,7 @@ Users should be able to:
 
 ### What I learned
 
-Creating my own Data types to parse the json response:
+Creating my own Data types to help parse the json response easily:
 ```ts
   type Data = {
     "ip"?: string,
@@ -68,6 +68,13 @@ Creating my own Data types to parse the json response:
     "isp"?: string,
     'error': Error | undefined,
   };
+```
+
+Using Dynamic Imports to fix issues with Maps not loading initially
+```ts
+  const Map = dynamic(() => {
+    return import("../components/map");
+  },{ssr: false});
 ```
 
 
