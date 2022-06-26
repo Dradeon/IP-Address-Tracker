@@ -42,7 +42,14 @@ export default async function handler(
   const {ip} = req.query;
   console.log(ip);
 
-  const BASE_URL = `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.API_KEY}&ipAddress=${ip}`;
+  let BASE_URL;
+  if(ip == "none"){
+    BASE_URL = `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.API_KEY}`;
+  }
+  else{
+    BASE_URL = `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.API_KEY}&ipAddress=${ip}`;
+  }
+  
 
   await runMiddleware(req, res, cors);
   return axios.get(BASE_URL).then((response:AxiosResponse) => {

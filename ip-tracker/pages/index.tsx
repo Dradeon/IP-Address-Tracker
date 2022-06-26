@@ -38,9 +38,10 @@ const shortStateName = (stateName: string | undefined) => {
 }
 
 
+
 const Home: NextPage = () => {
   
-  const [address, setAddress] = useState<String>("");
+  const [address, setAddress] = useState<String>("none");
   const [data, setData] = useState<Data>({"error": undefined});
 
   const changeAddress = (e : React.ChangeEvent<HTMLInputElement>) => {
@@ -48,9 +49,14 @@ const Home: NextPage = () => {
     console.log(e.currentTarget.value);
   }
 
+  const getLocation = async () => {
+
+  }
+
   const QueryLocation = async (e : SyntheticEvent) => {
     e.preventDefault();
-    axios.get(`/api/IP/${address}`).then((res : AxiosResponse)=>{
+
+    await axios.get(`/api/IP/${address}`).then((res : AxiosResponse)=>{
       console.log(res.data)
       setData(
         {"ip": res.data.ip,
@@ -72,17 +78,40 @@ const Home: NextPage = () => {
     });
   }
 
+  useEffect(()=>{
+    axios.get(`/api/IP/${address}`).then((res : AxiosResponse)=>{
+      console.log(res.data)
+      setData(
+        {"ip": res.data.ip,
+        "location": {
+          "country" : res.data.location.country,
+          "region" : res.data.location.region,
+          "city" : res.data.location.city,
+          "lat" : res.data.location.lat,
+          "lng" : res.data.location.lng,
+          "postalCode" : res.data.location.postalCode,
+          "timezone" : res.data.location.timezone,
+        },
+        "isp": res.data.isp,
+        'error': undefined,
+      });
+    }).catch((err : AxiosError) =>{
+      setData({"error": err.cause});
+      console.log(err);
+    });
+  },[])
+  
   return (
     <>
-      <div className='flex flex-col items-center min-w-full h-[250px] z-10 bg-hero-pattern bg-cover'>
+      <div className='flex flex-col items-center min-w-full h-[250px] z-10 bg-hero-pattern bg-cover bg-center'>
         <h1 className='font-rubik text-white font-medium text-4xl my-8'>IP Address Tracker</h1>
         <form className='w-[90%] h-auto mb-4 flex flex-col items-center' autoComplete='false' onSubmit={QueryLocation}>
           <span className='w-full max-w-lg align-middle'>
-            <input className='inline border-none rounded-l-2xl p-4  w-[84%] max-w-[500px]' placeholder='Search for any IP address or domain' pattern='(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}' type={'text'} onChange={changeAddress}></input>
-            <button className='inline bg-black rounded-r-2xl p-5' type='submit'><img className='' src='/icon-arrow.svg'></img></button>
+            <input className='inline border-none rounded-l-2xl p-4  w-[84%] max-w-[500px]' placeholder='Search for any IP address or domain' pattern='(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}' type={'text'} onChange={changeAddress} required></input>
+            <button className='inline bg-black rounded-r-2xl p-5 active:bg-VeryDarkGray' type='submit'><img className='' src='/icon-arrow.svg'></img></button>
           </span>
         </form>
-        <div className='flex flex-col items-center text-center bg-white px-8 py-4 rounded-[5vw] shadow-md w-[90%] max-w-5xl space-y-4 md:space-y-0 md:text-left md:flex-row md:items-center md:justify-center md:space-x-8'>
+        <div className='flex flex-col items-center text-center bg-white px-8 py-4 rounded-[5vw] shadow-md w-[90%] max-w-5xl space-y-4 md:space-y-0 md:text-left md:flex-row md:items-center md:justify-evenly md:space-x-8'>
           {/** IP Address */}
           <div className='min-h-fit md:min-h-full'>
             <h2 className='font-rubik font-bold text-DarkGray text-xs'>IP ADDRESS</h2>
@@ -93,14 +122,14 @@ const Home: NextPage = () => {
             <div className='hidden md:block min-h-[90%] border-[1px] opacity-50 border-DarkGray mr-4'></div>
             <div className=''>
               <h2 className='font-rubik font-bold text-DarkGray text-xs'>LOCATION</h2>
-              <p className='font-rubik font-medium text-VeryDarkGray text-xl'>{ `${data.location?.city ? data.location.city + ", " : ""} ${shortStateName(data.location?.region)} ${data.location?.postalCode ? data.location.postalCode : ""}`}</p>
+              <p className='font-rubik font-medium text-VeryDarkGray text-xl'>{ `${data.location?.city ? data.location.city + ", " : ""} ${data.location?.country === "US" ? shortStateName(data.location?.region): data.location?.region ? data.location.region : ""} ${data.location?.postalCode ? data.location.postalCode : ""}`}</p>
             </div>
           </div>
           {/** Timezone */}
           <div className='flex flex-row justify-between min-h-fit md:min-h-full'>
             <div className='hidden md:block min-h-[90%] border-[1px] opacity-50 border-DarkGray mr-4'></div>
             <div className=''>
-              <h2 className='font-rubik font-bold text-DarkGray text-xs'>LOCATION</h2>
+              <h2 className='font-rubik font-bold text-DarkGray text-xs'>TIMEZONE</h2>
               <p className='font-rubik font-medium text-VeryDarkGray text-xl'>{data.location?.timezone ? `UTC ${data.location.timezone}` : " "}</p>
             </div>
           </div>
@@ -108,7 +137,7 @@ const Home: NextPage = () => {
           <div className='flex flex-row justify-between min-h-fit md:min-h-full'>
             <div className='hidden md:block min-h-[90%] border-[1px] opacity-50 border-DarkGray mr-4'></div>
             <div className=''>
-              <h2 className='font-rubik font-bold text-DarkGray text-xs'>LOCATION</h2>
+              <h2 className='font-rubik font-bold text-DarkGray text-xs'>ISP</h2>
               <p className='font-rubik font-medium text-VeryDarkGray text-xl'>{data.isp ? data.isp : " "}</p>
             </div>
           </div>
@@ -122,5 +151,6 @@ const Home: NextPage = () => {
     </>
   )
 }
+
 
 export default Home
