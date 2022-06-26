@@ -104,7 +104,7 @@ const Home: NextPage = () => {
   return (
     <>
       <div className='flex flex-col items-center min-w-full h-[250px] z-10 bg-hero-pattern bg-cover bg-center'>
-        <h1 className='font-rubik text-white font-medium text-4xl my-8'>IP Address Tracker</h1>
+        <h1 className='font-rubik text-white font-medium text-4xl mt-12 mb-8'>IP Address Tracker</h1>
         <form className='w-[90%] h-auto mb-4 flex flex-col items-center' autoComplete='false' onSubmit={QueryLocation}>
           <span className='w-full max-w-lg align-middle'>
             <input className='inline border-none rounded-l-2xl p-4  w-[84%] max-w-[500px]' placeholder='Search for any IP address or domain' pattern='(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}' type={'text'} onChange={changeAddress} required></input>
