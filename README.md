@@ -29,7 +29,7 @@ Users should be able to:
 ### Screenshots
 
 ![](./screenshots/Desktop.png)
-<img src="./screenshots/Mobile.png" width="640px" height="1333px">
+<img src="./screenshots/Mobile.png" width="375px" height="781px">
 
 
 
