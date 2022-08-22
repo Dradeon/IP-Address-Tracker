@@ -1,16 +1,17 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import type { NextPage } from 'next'
+import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { SyntheticEvent, useEffect, useState } from 'react';
+
 const Map = dynamic(() => {
   return import("../components/map");
 },{ssr: false});
 import states from '../data/states';
 
-
 type Data = {
-  "ip"?: string,
-  "location"?: {
+  "ip" : string | null,
+  "location"  ?: {
     "country" ?: string,
     "region" ?: string,
     "city" ?: string,
@@ -19,8 +20,8 @@ type Data = {
     "postalCode" ?: string,
     "timezone" ?: string,
   },
-  "isp"?: string,
-  'error': Error | undefined,
+  "isp" : string | null,
+  'error' ?: AxiosError | undefined,
 };
 
 const shortStateName = (stateName: string | undefined) => {
@@ -42,17 +43,15 @@ const shortStateName = (stateName: string | undefined) => {
 const Home: NextPage = () => {
   
   const [address, setAddress] = useState<String>("none");
-  const [data, setData] = useState<Data>({"error": undefined});
+  const [data, setData] = useState<Data>({ip: null, isp: null, 'error' : undefined});
 
+  // Change address currently in state
   const changeAddress = (e : React.ChangeEvent<HTMLInputElement>) => {
     setAddress(e.currentTarget.value);
     console.log(e.currentTarget.value);
   }
 
-  const getLocation = async () => {
-
-  }
-
+  // Get the location specified
   const QueryLocation = async (e : SyntheticEvent) => {
     e.preventDefault();
 
@@ -73,11 +72,12 @@ const Home: NextPage = () => {
         'error': undefined,
       });
     }).catch((err : AxiosError) =>{
-      setData({"error": err.cause});
+      setData({ip: null, isp: null, "error": err});
       console.log(err);
     });
   }
 
+  // Getting User's Location upon loading component
   useEffect(()=>{
     axios.get(`/api/IP/${address}`).then((res : AxiosResponse)=>{
       console.log(res.data)
@@ -96,7 +96,7 @@ const Home: NextPage = () => {
         'error': undefined,
       });
     }).catch((err : AxiosError) =>{
-      setData({"error": err.cause});
+      setData({ip: null, isp: null,"error": err});
       console.log(err);
     });
   },[])
@@ -108,7 +108,7 @@ const Home: NextPage = () => {
         <form className='w-[90%] h-auto mb-4 flex flex-col items-center' autoComplete='false' onSubmit={QueryLocation}>
           <span className='w-full max-w-lg align-middle'>
             <input className='inline border-none rounded-l-2xl p-4  w-[84%] max-w-[500px]' placeholder='Search for any IP address or domain' pattern='(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}' type={'text'} onChange={changeAddress} required></input>
-            <button className='inline bg-black rounded-r-2xl p-5 active:bg-VeryDarkGray' type='submit'><img className='' src='/icon-arrow.svg'></img></button>
+            <button className='inline bg-black rounded-r-2xl p-5 active:bg-VeryDarkGray' type='submit'><Image className='' alt="Arrow Icon" src='/icon-arrow.svg'></Image></button>
           </span>
         </form>
         <div className='flex flex-col items-center text-center bg-white px-8 py-4 rounded-[5vw] shadow-md w-[90%] max-w-5xl space-y-4 md:space-y-0 md:text-left md:flex-row md:items-center md:justify-evenly md:space-x-8'>

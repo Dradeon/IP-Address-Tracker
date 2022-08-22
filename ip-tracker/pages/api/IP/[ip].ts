@@ -52,11 +52,11 @@ export default async function handler(
   
 
   await runMiddleware(req, res, cors);
-  return axios.get(BASE_URL).then((response:AxiosResponse) => {
+  return axios.get(BASE_URL).then((response: AxiosResponse) => {
     console.log(res);
     res.status(200).json({...response.data, error:undefined});
-  }).catch((err:AxiosError) => {
+  }).catch((err: AxiosError) => {
     console.log(err)
-    res.status(400).json({error: err.cause});
+    res.status(400).json({error: err});
   });
 }
